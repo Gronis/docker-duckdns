@@ -1,0 +1,7 @@
+version: "3.2"
+
+services:
+  duckdns:
+    environment:
+      TOKEN: your-duckdns-token
+      DOMAINS: domain1:domain2:domain3

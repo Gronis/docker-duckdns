@@ -1,0 +1,31 @@
+version: "3.2"
+
+services:
+  duckdns:
+    image: alpine/curl
+    hostname: duckdns
+    container_name: duckdns
+    restart: unless-stopped
+    tty: true
+    command: >
+      sh -c 'mkdir -p ~/duckdns;
+      while true; do
+        if [ -z "$$TOKEN" ] || [ -z "$$DOMAINS" ]; then
+          echo "❌ Environment variables TOKEN and/or DOMAINS are not set!";
+          echo "➡️  Please set them in docker-compose.override.yml:";
+          echo "";
+          echo "services:";
+          echo "  duckdns:";
+          echo "    environment:";
+          echo "      TOKEN: your-duckdns-token";
+          echo "      DOMAINS: domain1:domain2:domain3";
+          echo "";
+        else
+          for DOMAIN in $$(echo $$DOMAINS | tr ":" "\n"); do
+            TIMESTAMP=$$(date "+%Y-%m-%d %H:%M:%S");
+            echo "Updating DuckDNS for $$DOMAIN at $$TIMESTAMP" | tee -a ~/duckdns/duck.log;
+            echo url="https://www.duckdns.org/update?domains=$$DOMAIN&token=$$TOKEN&ip=" | curl -k -o - -K - >> ~/duckdns/duck.log 2>&1;
+          done;
+        fi;
+        sleep 86400;
+      done'
