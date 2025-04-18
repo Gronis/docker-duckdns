@@ -4,6 +4,8 @@ A docker image for updating your DuckDNS records. It will execute when you start
 Create `docker-compose.override.yml` with your TOKEN and your DOMAINS (separate each domain with colon)
 
 ```yml
+version: "3.2"
+
 services:
   duckdns:
     environment:
